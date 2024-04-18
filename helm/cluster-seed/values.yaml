@@ -2,7 +2,6 @@ nameOverride: ""
 fullnameOverride: ""
 namespaces:
   - name: openshift-gitops
-  - name: openshift-cnv
 subscriptions:
   - name: openshift-gitops-operator
     namespace: openshift-operators
@@ -16,9 +15,6 @@ subscriptions:
     sourceNamespace: openshift-marketplace
 
 operatorGroups:
-  - name: openshift-cnv-49p9h
-    namespace: openshift-cnv
-    targetNamespace: openshift-cnv
 
 catalogSources: []
   # - name: operatorhubio
