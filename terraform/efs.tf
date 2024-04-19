@@ -1,6 +1,6 @@
 # https://cloud.redhat.com/experts/rosa/aws-efs/
 
-resource "aws_iam_policy" "rosa-efs-csi-policy" {
+resource "aws_iam_policy" "rosa_efs_csi_policy_iam" {
   name        = "${var.cluster_name}-rosa-efs-csi"
   path        = "/"
   description = "AWS EFS CSI Driver Policy"
@@ -45,4 +45,34 @@ resource "aws_iam_policy" "rosa-efs-csi-policy" {
       }
     ]
   })
+}
+
+resource "aws_iam_role" "rosa_efs_csi_role_iam" {
+  name = "${var.cluster_name}-rosa-efs-csi-role-iam"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = var.oidc_config_id
+        }
+        Action = "sts:AssumeRoleWithWebIdentity",
+        Condition = {
+          StringEquals = {
+            "${var.oidc_config_id}:sub" = [
+              "system:serviceaccount:openshift-cluster-csi-drivers:aws-efs-csi-driver-operator",
+              "system:serviceaccount:openshift-cluster-csi-drivers:aws-efs-csi-driver-controller-sa"
+            ]
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "rosa_efs_csi_role_iam_attachment" {
+  role       = aws_iam_role.rosa_efs_csi_role_iam.name
+  policy_arn = aws_iam_policy.rosa_efs_csi_policy_iam.arn
 }
