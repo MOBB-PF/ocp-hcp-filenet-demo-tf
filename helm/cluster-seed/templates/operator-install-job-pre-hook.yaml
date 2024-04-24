@@ -99,13 +99,3 @@ spec:
                 CSV_STATUS=$( ./oc get csv -n openshift-operators $CSV_NAME -o jsonpath={..status.reason} )
               done
               echo "openshift-gitops-operator operator installed successfully"              
-              # openshift-virtualisation-operator
-              echo "openshift-virtualisation-operator operator install"
-              CSV_STATUS="Pausing $SLEEP seconds..."
-              while [ "$CSV_STATUS" != "InstallSucceeded" ]; do
-                CSV_NAME=$(./oc get csv -n openshift-cnv | egrep kubevirt-hyperconverged-operator | awk '{print $1}')
-                echo "Waiting for the Operator to be ready. ($CSV_STATUS)"
-                sleep $SLEEP
-                CSV_STATUS=$( ./oc get csv -n openshift-cnv $CSV_NAME -o jsonpath={..status.reason} )
-              done
-              echo "openshift-virtualisation-operator operator installed successfully"
