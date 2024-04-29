@@ -12,8 +12,8 @@ RUN dnf -y update \
     && dnf -y clean all
 
 ## FROM ocm-container ##
-RUN git clone --depth 1 https://github.com/junegunn/fzf.git /root/.fzf \
-      && /root/.fzf/install --all
+RUN git clone --depth 1 https://github.com/junegunn/fzf.git /root/.fzf || /bin/true; \
+      /root/.fzf/install --all
 
 ARG BACKPLANE_TOOLS_VERSION="tags/v1.1.0"
 ENV BACKPLANE_TOOLS_URL_SLUG="openshift/backplane-tools"
