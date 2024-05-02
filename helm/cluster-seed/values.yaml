@@ -22,3 +22,7 @@ catalogSources: []
   #   image: quay.io/operator-framework/upstream-community-operators:latest
   #   displayName: Community Operators
   #   publisher: OperatorHub.io
+
+efs:
+  roleArn: testRoleARN
+  fileSystemId: testFileSystemId
