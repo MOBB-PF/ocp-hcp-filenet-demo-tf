@@ -35,7 +35,8 @@ resource "null_resource" "seed" {
       secret_id          = aws_secretsmanager_secret.secret[0].id
       helm_chart         = var.seed.helm_chart
       helm_chart_version = var.seed.helm_chart_version
+      roleArn            = "terraform_roleArn"
+      fileSystemId       = "terraform_fileSystemId"
     }
   }
 }
-

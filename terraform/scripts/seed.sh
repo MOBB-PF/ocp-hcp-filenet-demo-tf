@@ -4,7 +4,7 @@ echo "#########################################"
 echo "Script start $date"
 echo "#########################################"
 
-# login rosa 
+# login rosa
 rosa login -t $RHCS_TOKEN
 # Check if cluster is ready
 i=0
@@ -68,7 +68,7 @@ done
 
 sleep 120
 oc project openshift-operators
-# helm repo add --username foster-rh --password $helm_token helm_repo $helm_repo 
+# helm repo add --username foster-rh --password $helm_token helm_repo $helm_repo
 # helm repo update
 helm install operators ../helm/$helm_chart --version $helm_chart_version --insecure-skip-tls-verify --set rosaDomain=$domain|grep -i err
 if [ $? -eq 0 ]
@@ -78,6 +78,19 @@ if [ $? -eq 0 ]
 fi
 echo "Helm successfully installed seed chart."
 date=`date`
+
+helm install efs ../helm/efs --version 0.0.1 --insecure-skip-tls-verify \
+  --set roleArn=$roleArn \
+  --set fileSystemId=$fileSystemId \
+  | grep -i err
+if [ $? -eq 0 ]
+  then
+    echo "Helm failed to install initial helm efs successfully attemp $i - exiting"
+    exit 1
+fi
+echo "Helm successfully installed seed chart."
+date=`date`
+
 rosa describe cluster -c $cluster
 echo "#########################################"
 echo "END $date"
