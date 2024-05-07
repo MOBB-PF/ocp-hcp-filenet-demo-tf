@@ -35,7 +35,7 @@ resource "null_resource" "seed" {
       secret_id          = aws_secretsmanager_secret.secret[0].id
       helm_chart         = var.seed.helm_chart
       helm_chart_version = var.seed.helm_chart_version
-      roleArn            = "terraform_roleArn"
+      roleArn            = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}-rosa-efs-csi-role-iam"
       fileSystemId       = "terraform_fileSystemId"
     }
   }

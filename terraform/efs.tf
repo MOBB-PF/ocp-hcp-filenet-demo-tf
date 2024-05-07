@@ -78,3 +78,52 @@ resource "aws_iam_role_policy_attachment" "rosa_efs_csi_role_iam_attachment" {
   role       = aws_iam_role.rosa_efs_csi_role_iam.name
   policy_arn = aws_iam_policy.rosa_efs_csi_policy_iam.arn
 }
+
+resource "aws_efs_file_system" "rosa_efs" {
+  creation_token = "efs-token-1"
+  encrypted      = true
+
+  tags = {
+    Name = "${var.cluster_name}-rosa-efs"
+  }
+}
+
+resource "aws_efs_mount_target" "efs_mount_pool_1" {
+  file_system_id = aws_efs_file_system.rosa_efs.id
+  subnet_id      = data.rhcs_hcp_machine_pool.hcp_mcp_pool_1.subnet_id
+  ##security_groups = [aws_security_group.ec2_security_group.id]
+  depends_on = [
+    data.rhcs_hcp_machine_pool.hcp_mcp_pool_1
+  ]
+}
+resource "aws_efs_mount_target" "efs_mount_worker_0" {
+  file_system_id = aws_efs_file_system.rosa_efs.id
+  subnet_id      = data.rhcs_hcp_machine_pool.hcp_mcp_workers_0.subnet_id
+  ##security_groups = [aws_security_group.ec2_security_group.id]
+  depends_on = [
+    data.rhcs_hcp_machine_pool.hcp_mcp_workers_0
+  ]
+}
+resource "aws_efs_mount_target" "efs_mount_worker_1" {
+  file_system_id = aws_efs_file_system.rosa_efs.id
+  subnet_id      = data.rhcs_hcp_machine_pool.hcp_mcp_workers_1.subnet_id
+  ##security_groups = [aws_security_group.ec2_security_group.id]
+  depends_on = [
+    data.rhcs_hcp_machine_pool.hcp_mcp_workers_1
+  ]
+}
+
+data "rhcs_hcp_machine_pool" "hcp_mcp_pool_1" {
+  cluster = "rosa-pub-1"
+  name    = "pool1"
+}
+
+data "rhcs_hcp_machine_pool" "hcp_mcp_workers_0" {
+  cluster = "workers-0"
+  name    = "pool1"
+}
+
+data "rhcs_hcp_machine_pool" "hcp_mcp_workers_1" {
+  cluster = "workers-1"
+  name    = "pool1"
+}
