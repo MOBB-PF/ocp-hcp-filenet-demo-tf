@@ -93,7 +93,7 @@ resource "aws_efs_mount_target" "efs_mount_pool_1" {
   subnet_id      = data.rhcs_hcp_machine_pool.hcp_mcp_pool_1.subnet_id
   ##security_groups = [aws_security_group.ec2_security_group.id]
   depends_on = [
-    data.rhcs_hcp_machine_pool.hcp_mcp_pool_1
+    module.rhcs_cluster_rosa_hcp
   ]
 }
 resource "aws_efs_mount_target" "efs_mount_worker_0" {
@@ -101,7 +101,7 @@ resource "aws_efs_mount_target" "efs_mount_worker_0" {
   subnet_id      = data.rhcs_hcp_machine_pool.hcp_mcp_workers_0.subnet_id
   ##security_groups = [aws_security_group.ec2_security_group.id]
   depends_on = [
-    data.rhcs_hcp_machine_pool.hcp_mcp_workers_0
+    module.rhcs_cluster_rosa_hcp
   ]
 }
 resource "aws_efs_mount_target" "efs_mount_worker_1" {
@@ -109,21 +109,30 @@ resource "aws_efs_mount_target" "efs_mount_worker_1" {
   subnet_id      = data.rhcs_hcp_machine_pool.hcp_mcp_workers_1.subnet_id
   ##security_groups = [aws_security_group.ec2_security_group.id]
   depends_on = [
-    data.rhcs_hcp_machine_pool.hcp_mcp_workers_1
+    module.rhcs_cluster_rosa_hcp
   ]
 }
 
 data "rhcs_hcp_machine_pool" "hcp_mcp_pool_1" {
   cluster = "rosa-pub-1"
   name    = "pool1"
+  depends_on = [
+    module.rhcs_cluster_rosa_hcp
+  ]
 }
 
 data "rhcs_hcp_machine_pool" "hcp_mcp_workers_0" {
-  cluster = "workers-0"
-  name    = "pool1"
+  cluster = "rosa-pub-1"
+  name    = "workers-0"
+  depends_on = [
+    module.rhcs_cluster_rosa_hcp
+  ]
 }
 
 data "rhcs_hcp_machine_pool" "hcp_mcp_workers_1" {
-  cluster = "workers-1"
-  name    = "pool1"
+  cluster = "rosa-pub-1"
+  name    = "workers-1"
+  depends_on = [
+    module.rhcs_cluster_rosa_hcp
+  ]
 }
