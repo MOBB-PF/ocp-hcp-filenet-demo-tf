@@ -10,7 +10,7 @@ TERRAFORM_DIR := examples/rosa-hcp-public-with-byo-vpc-byo-iam-byo-oidc
 
 # include .env
 # export $(shell sed '/^\#/d; s/=.*//' .env)
-TF_LOG=INFO
+TF_LOG=DEBUG
 ######################
 # .EXPORT_ALL_VARIABLES:
 

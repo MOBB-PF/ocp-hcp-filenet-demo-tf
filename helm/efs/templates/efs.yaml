@@ -7,14 +7,17 @@ metadata:
 stringData:
   credentials: |-
     [default]
-    role_arn = {{ .Values.efs.roleArn }}
+    role_arn = {{ .Values.roleArn }}
     web_identity_token_file = /var/run/secrets/openshift/serviceaccount/token
 ---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  generateName: openshift-cluster-csi-drivers-
   namespace: openshift-cluster-csi-drivers
+  name: openshift-cluster-csi-drivers
+spec:
+  targetNamespaces:
+  upgradeStrategy: Default
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
@@ -44,7 +47,7 @@ metadata:
 provisioner: efs.csi.aws.com
 parameters:
   provisioningMode: efs-ap
-  fileSystemId: {{ .Values.efs.fileSystemId }}
+  fileSystemId: {{ .Values.fileSystemId }}
   directoryPerms: "700"
   gidRangeStart: "1000"
   gidRangeEnd: "2000"

@@ -2,6 +2,8 @@ nameOverride: ""
 fullnameOverride: ""
 namespaces:
   - name: openshift-gitops
+  - name: gitea-operator
+  - name: cp4ba-common
 subscriptions:
   - name: openshift-gitops-operator
     namespace: openshift-operators

@@ -70,27 +70,51 @@ sleep 120
 oc project openshift-operators
 # helm repo add --username foster-rh --password $helm_token helm_repo $helm_repo
 # helm repo update
+echo "installing cluster-seed"
 helm install operators ../helm/$helm_chart --version $helm_chart_version --insecure-skip-tls-verify --set rosaDomain=$domain|grep -i err
 if [ $? -eq 0 ]
   then
-    echo "Helm failed to install initial helm operators successfully attemp $i - exiting"
+    echo "Helm failed to install initial cluster-seed helm operators successfully attemp $i - exiting"
     exit 1
 fi
 echo "Helm successfully installed seed chart."
 date=`date`
-
-helm install efs ../helm/efs --version 0.0.1 --insecure-skip-tls-verify \
-  --set roleArn=$roleArn \
-  --set fileSystemId=$fileSystemId \
-  | grep -i err
+echo "installing efs"
+helm install efs ../helm/efs --version "0.0.1" --insecure-skip-tls-verify --set roleArn=$roleArn --set fileSystemId=$fileSystemId|grep -i err
 if [ $? -eq 0 ]
   then
     echo "Helm failed to install initial helm efs successfully attemp $i - exiting"
     exit 1
 fi
-echo "Helm successfully installed seed chart."
+echo "Helm successfully installed efs chart."
 date=`date`
-
+echo "installing gitea"
+helm install gitea ../helm/gitea --version "0.0.1" --insecure-skip-tls-verify |grep -i err
+if [ $? -eq 0 ]
+  then
+    echo "Helm failed to install initial helm gitea successfully attemp $i - exiting"
+    exit 1
+fi
+echo "Helm successfully installed gitea chart."
+date=`date`
+echo "installing dbeaver"
+helm install dbeaver ../helm/dbeaver --version "0.0.1" --insecure-skip-tls-verify |grep -i err
+if [ $? -eq 0 ]
+  then
+    echo "Helm failed to install initial helm beaver successfully attemp $i - exiting"
+    exit 1
+fi
+echo "Helm successfully installed beaver chart."
+date=`date`
+echo "installing openldap"
+helm install openldap ../helm/openldap --version "0.0.1" --insecure-skip-tls-verify |grep -i err
+if [ $? -eq 0 ]
+  then
+    echo "Helm failed to install initial helm openldap successfully attemp $i - exiting"
+    exit 1
+fi
+echo "Helm successfully installed openldap chart."
+date=`date`
 rosa describe cluster -c $cluster
 echo "#########################################"
 echo "END $date"

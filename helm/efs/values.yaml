@@ -1,4 +1,2 @@
-
-efs:
-  roleArn: placeholder_roleARN
-  fileSystemId: placeholder_fileSystemId
+roleArn: placeholder_roleARN
+fileSystemId: placeholder_fileSystemId
