@@ -1,0 +1,17 @@
+---
+apiVersion: pfe.rhpds.com/v1
+kind: Gitea
+metadata:
+  annotations:
+    helm.sh/hook: post-install
+  name: gitea
+  namespace: gitea-operator
+spec:
+  giteaSsl: true
+  giteaAdminUser: gitea
+  giteaAdminEmail: cloudpak@ibm.com
+  giteaAdminPassword: cloudPakPassw0rd!
+  giteaVolumeSize: 1Gi
+  giteaVolumeStorageClass: gp3-csi
+  postgresqlVolumeSize: 1Gi
+  postgresqlVolumeStorageClass: gp3-csi

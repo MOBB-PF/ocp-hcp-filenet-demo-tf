@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldapgui
+  labels:
+    app: ldapgui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       app: ldapgui
+  template:
+    metadata:
+      labels:
+        app: ldapgui
+    spec:
+      containers:
+        - name: ldapgui
+          image: rschaeuble/phpldapadmin
+          ports:
+            - containerPort: 80
+              name: ldapgui
+          env:
+            - name: LDAP_URL
+              value: "ldap://ldap:389"
+            - name: LDAP_BASE
+              value: "dc=cloudpak,dc=ibm"
+            - name: LDAP_ADMIN
+              value: "cn=admin,dc=cloudpak,dc=ibm"
+          securityContext:
+            allowPrivilegeEscalation: true
+            privileged: true
+            readOnlyRootFilesystem: false
+            runAsNonRoot: false
+            runAsUser: 0
+      serviceAccount: cp4ba-common-sa
+      serviceAccountName: cp4ba-common-sa

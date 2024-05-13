@@ -1,0 +1,44 @@
+shell into the ldap pod, and execute the following commands one at a time
+
+slapcat -n 0 | grep olcModuleLoad
+
+cat > /etc/ldap/member-of-lib.ldif <<EOT
+dn: cn=module,cn=config
+cn: module 
+objectClass: olcModuleList
+olcModulePath: /usr/lib/ldap
+olcModuleLoad: memberof.la
+EOT
+
+cat > /etc/ldap/refint-lib.ldif <<EOT
+dn: cn=module,cn=config
+cn: module
+objectclass: olcModuleList
+objectclass: top
+olcmoduleload: refint.la
+olcmodulepath: /usr/lib/ldap
+EOT
+
+cat > /etc/ldap/memberof.ldif <<EOT
+dn: olcOverlay={0}memberof,olcDatabase={1}hdb,cn=config
+objectClass: olcConfig
+objectClass: olcMemberOf
+objectClass: olcOverlayConfig
+objectClass: top
+olcOverlay: memberof
+EOT
+
+cat > /etc/ldap/refint.ldif <<EOT
+dn: olcOverlay={1}refint,olcDatabase={1}hdb,cn=config
+objectClass: olcConfig
+objectClass: olcOverlayConfig
+objectClass: olcRefintConfig
+objectClass: top
+olcOverlay: {1}refint
+olcRefintAttribute: memberof member manager owner
+EOT
+
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/member-of-lib.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint-lib.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/memberof.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/refint.ldif

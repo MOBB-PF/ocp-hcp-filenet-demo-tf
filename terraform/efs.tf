@@ -58,12 +58,12 @@ resource "aws_iam_role" "rosa_efs_csi_role_iam" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${module.rhcs_cluster_rosa_hcp.oidc_config_id}"
+          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/oidc.op1.openshiftapps.com/${module.rhcs_cluster_rosa_hcp.oidc_config_id}"
         }
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
           StringEquals = {
-            "${module.rhcs_cluster_rosa_hcp.oidc_config_id}:sub" = [
+            "oidc.op1.openshiftapps.com/${module.rhcs_cluster_rosa_hcp.oidc_config_id}:sub" = [
               "system:serviceaccount:openshift-cluster-csi-drivers:aws-efs-csi-driver-operator",
               "system:serviceaccount:openshift-cluster-csi-drivers:aws-efs-csi-driver-controller-sa"
             ]
@@ -82,7 +82,6 @@ resource "aws_iam_role_policy_attachment" "rosa_efs_csi_role_iam_attachment" {
 resource "aws_efs_file_system" "rosa_efs" {
   creation_token = "efs-token-1"
   encrypted      = true
-
   tags = {
     Name = "${var.cluster_name}-rosa-efs"
   }
@@ -113,13 +112,13 @@ resource "aws_efs_mount_target" "efs_mount_worker_1" {
   ]
 }
 
-data "rhcs_hcp_machine_pool" "hcp_mcp_pool_1" {
-  cluster = module.rhcs_cluster_rosa_hcp.rosa_cluster_hcp_cluster_id
-  name    = "pool1"
-  depends_on = [
-    module.rhcs_cluster_rosa_hcp
-  ]
-}
+# data "rhcs_hcp_machine_pool" "hcp_mcp_pool_1" {
+#   cluster = module.rhcs_cluster_rosa_hcp.rosa_cluster_hcp_cluster_id
+#   name    = "pool1"
+#   depends_on = [
+#     module.rhcs_cluster_rosa_hcp
+#   ]
+# }
 
 data "rhcs_hcp_machine_pool" "hcp_mcp_workers_0" {
   cluster = module.rhcs_cluster_rosa_hcp.rosa_cluster_hcp_cluster_id

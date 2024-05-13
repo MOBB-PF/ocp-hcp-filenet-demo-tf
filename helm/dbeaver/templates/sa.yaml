@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "-1"
+  name: cp4ba-common-sa
+  namespace: cp4ba-common
