@@ -6,7 +6,7 @@ metadata:
     helm.sh/hook: pre-install
     helm.sh/hook-weight: "-2"
   labels:
-  name: operator-install-job-hook
+  name: gitea-install-job-hook
 rules:
 - apiGroups:
   - operators.coreos.com
@@ -34,15 +34,15 @@ metadata:
     helm.sh/hook: pre-install
     helm.sh/hook-weight: "-1"
   labels:
-  name: operator-install-job-hook
+  name: gitea-install-job-hook
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: operator-install-job-hook
+  name: gitea-install-job-hook
 subjects:
 - kind: ServiceAccount
-  name: operator-install-job-hook
-  namespace: openshift-operators
+  name: gitea-install-job-hook
+  namespace: gitea-operator
 ---
 apiVersion: v1
 imagePullSecrets:
@@ -52,8 +52,8 @@ metadata:
   annotations:
     helm.sh/hook: pre-install
     helm.sh/hook-weight: "-1"
-  name: operator-install-job-hook
-  namespace: openshift-operators
+  name: gitea-install-job-hook
+  namespace: gitea-operator
 ---
 apiVersion: batch/v1
 kind: Job
@@ -62,18 +62,18 @@ metadata:
     helm.sh/hook: pre-install
     helm.sh/hook-delete-policy: hook-succeeded
     helm.sh/hook-weight: "1"
-  name: operator-install-job-hook
-  namespace: openshift-operators
+  name: gitea-install-job-hook
+  namespace: gitea-operator
 spec:
   template:
     spec: 
       dnsPolicy: ClusterFirst
       restartPolicy: OnFailure
-      serviceAccount: operator-install-job-hook
-      serviceAccountName: operator-install-job-hook
+      serviceAccount: gitea-install-job-hook
+      serviceAccountName: gitea-install-job-hook
       terminationGracePeriodSeconds: 30
       containers:
-        - name: operator-install-job-hook
+        - name: gitea-install-job-hook
           image: registry.access.redhat.com/ubi8/ubi
           imagePullPolicy: IfNotPresent
           env:
@@ -93,9 +93,9 @@ spec:
               echo "openshift-gitops-operator operator install"
               CSV_STATUS="Pausing $SLEEP seconds..."
               while [ "$CSV_STATUS" != "InstallSucceeded" ]; do
-                CSV_NAME=$(./oc get csv -n openshift-operators | egrep openshift-gitops-operator| awk '{print $1}')
+                CSV_NAME=$(./oc get csv -n gitea-operator | egrep gitea-operator| awk '{print $1}')
                 echo "Waiting for the Operator to be ready. ($CSV_STATUS)"
                 sleep $SLEEP
-                CSV_STATUS=$( ./oc get csv -n openshift-operators $CSV_NAME -o jsonpath={..status.reason} )
+                CSV_STATUS=$( ./oc get csv -n gitea-operator $CSV_NAME -o jsonpath={..status.reason} )
               done
               echo "openshift-gitops-operator operator installed successfully"              

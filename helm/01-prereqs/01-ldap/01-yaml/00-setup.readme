@@ -1,0 +1,14 @@
+oc new-project cp4ba-common
+
+oc create sa cp4ba-common-sa
+
+oc edit scc privileged
+
+add "- system:serviceaccount:cp4ba-common:cp4ba-common-sa" to the privileged scc user list
+
+It will look like this when you are done:
+
+users:
+- system:admin
+- system:serviceaccount:openshift-infra:build-controller
+- system:serviceaccount:cp4ba-common:cp4ba-common-sa
